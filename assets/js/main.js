@@ -35,13 +35,6 @@ $(document).ready(function(){
       }
     }
   
-    
-
-
-
-
-
-
 
     const removeTodo = function(e) {
       let id = $(this).parent()[0].id;
@@ -59,29 +52,9 @@ $(document).ready(function(){
         }
       });
     }
-  
-    // const updateTodo = function (e) {
-  
-    //   let id = $(this).parent()[0].id;
-    //   let complete = $(this).data('complete');
-  
-    //   console.log('complete ', complete);
-  
-    //   if (complete === false) {
-    //     $.post("/update-todo", {
-    //       id: id
-    //     }, function (response) {
-    //       if (response.success) {
-    //         $('#' + response.id).addClass('checked');
-    //       }
-    //       else {
-    //         alert(response.message);
-    //       }
-    //     });
-    //   }
-  
-    // }
-  
+
+
+
     $('#todos_container').on('click', '.remove', removeTodo);
   
     $('#todos_container').on('click', '.todo', updateTodo);
