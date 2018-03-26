@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
   database : 'todo_app'
 });
 
-connection.connect();
+connection.connect(); // connects to the database
 
 module.exports = connection;
 
