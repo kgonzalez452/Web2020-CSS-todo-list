@@ -1,51 +1,76 @@
 $(document).ready(function(){
-    const scroll = () => $('#todos_container').scrollTop($('#todos_container')[0].scrollHeight);
-  
-    const createTodo = function() {
-      let task = $('#todo_input').val();
-      if (task) {
-        $.post("/create-todo", {
-          task: task
-        }, function (response) {
-          if (response.success) {
-            console.log('result ', response.todo);
-  
-            $('#todos_container').append(`
-              <div id="${response.todo.id}" class="todo-container ${response.todo.complete ? 'checked' : ''}">
-                <div class="remove">
-                  <span class="ion-close-round icon-remove"></span>
-                </div>
-                <div data-complete="${response.todo.complete}" class="todo">
-                  ${response.todo.task}
-                </div>
+  const scroll = () => $('#todos_container').scrollTop($('#todos_container')[0].scrollHeight);
+
+  const createTodo = function() {
+    let task = $('#todo_input').val();
+    if (task) {
+      $.post("/create-todo", {
+        task: task
+      }, function (response) {
+        if (response.success) {
+          console.log('result ', response.todo);
+
+          $('#todos_container').append(`
+            <div id="${response.todo.id}" class="todo-container ${response.todo.complete ? 'checked' : ''}">
+              <div class="remove">
+                <span class="ion-close-round icon-remove"></span>
               </div>
-            `);
-  
-            $('#todo_input').val('');
-  
-            scroll();
-          }
-          else {
-            alert(response.message);
-          }
-        });
+              <div data-complete="${response.todo.complete}" class="todo">
+                ${response.todo.task}
+              </div>
+            </div>
+          `);
+
+          $('#todo_input').val('');
+
+          scroll();
+        }
+        else {
+          alert(response.message);
+        }
+      });
+    }
+    else {
+      alert('You must insert a task');
+    }
+  }
+
+  const removeTodo = function(e) {
+    let id = $(this).parent()[0].id;
+
+    console.log('removing ', id);
+
+    $.post("/delete-todo", {
+      id: id
+    }, function (response) {
+      if (response.success) {
+        $('#' + response.id).remove();
+        console.log(id);
       }
       else {
-        alert('You must insert a task');
+        alert(response.message);
       }
-    }
-  
+    });
+  }
 
-    const removeTodo = function(e) {
-      let id = $(this).parent()[0].id;
-  
-      console.log('removing ', id);
-  
-      $.post("/delete-todo", {
+  const updateTodo = function (e) {
+
+    let id = $(this).parent()[0].id;
+    // let complete = $(this).data('complete');
+    let complete = $(".complete").click(function() {
+      $(this).css(
+        {"text-decoration": "line-through white",
+         "color":"black"});
+    });
+
+    console.log('complete ', complete);
+
+    if (complete === false) {
+      $.post("/update-todo", {
         id: id
       }, function (response) {
         if (response.success) {
-          $('#' + response.id).remove();
+          $('#' + response.id).addClass('checked');
         }
         else {
           alert(response.message);
@@ -53,17 +78,17 @@ $(document).ready(function(){
       });
     }
 
+  }
 
+  $('#todos_container').on('click', '.remove', removeTodo);
 
-    $('#todos_container').on('click', '.remove', removeTodo);
-  
-    $('#todos_container').on('click', '.todo', updateTodo);
-  
-    $('#btn').on('click', createTodo);
-  
-    $('#todo_input').on('keyup', function (e) {
-      if(e.keyCode === 13){
-        createTodo();
-      }
-    });
+  $('#todos_container').on('click', '.todo', updateTodo);
+
+  $('#btn').on('click', createTodo);
+
+  $('#todo_input').on('keyup', function (e) {
+    if(e.keyCode === 13){
+      createTodo();
+    }
   });
+});
